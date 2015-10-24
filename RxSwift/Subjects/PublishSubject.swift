@@ -85,7 +85,12 @@ public class PublishSubject<Element> : Observable<Element>, SubjectType, Cancela
                     return
                 }
                 
-                _observers.forEach { $0.on(event) }
+                //_observers.forEach { $0.on(event) }
+                let pairs = _observers.pairs
+
+                for i in 0 ..< pairs.count {
+                    pairs[i].value.on(event)
+                }
             case .Completed, .Error:
                 if _stoppedEvent == nil {
                     _stoppedEvent = event

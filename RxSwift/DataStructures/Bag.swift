@@ -140,4 +140,17 @@ extension Bag {
             action(pairs[i].value)
         }
     }
+
+    /**
+    Enumerates elements inside the bag.
+    
+    - parameter action: Enumeration closure.
+    */
+    public func forEach<S>(state: S, @noescape _ action: (T, S) -> Void) {
+        let pairs = self.pairs
+        
+        for i in 0 ..< pairs.count {
+            action(pairs[i].value, state)
+        }
+    }
 }

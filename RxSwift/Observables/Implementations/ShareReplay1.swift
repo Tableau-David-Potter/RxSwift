@@ -24,7 +24,7 @@ class ShareReplay1<Element> : Observable<Element>, ObserverType {
     }
 
     override func subscribe<O : ObserverType where O.E == E>(observer: O) -> Disposable {
-        return _lock.calculateLocked {
+        _lock.lock(); defer { _lock.unlock() }
             if let element = self._element {
                 observer.on(.Next(element))
             }
@@ -52,26 +52,26 @@ class ShareReplay1<Element> : Observable<Element>, ObserverType {
                     }
                 }
             }
-        }
     }
 
     func on(event: Event<E>) {
-        _lock.performLocked {
-            if self._stopEvent != nil {
-                return
-            }
+        _lock.lock(); defer { _lock.unlock() }
+        if self._stopEvent != nil {
+            return
+        }
 
-            if case .Next(let element) = event {
-                self._element = element
-            }
+        if case .Next(let element) = event {
+            self._element = element
+        }
 
-            if event.isStopEvent {
-                self._stopEvent = event
-            }
+        if event.isStopEvent {
+            self._stopEvent = event
+        }
 
-            _observers.forEach { o in
-                o.on(event)
-            }
+        let pairs = _observers.pairs
+
+        for i in 0 ..< pairs.count {
+            pairs[i].value.on(event)
         }
     }
 }

@@ -47,10 +47,23 @@ extension NSRecursiveLock {
         action()
         self.unlock()
     }
+
+    func performLocked<S>(state: S, @noescape _ action: (S) -> Void) {
+        self.lock()
+        action(state)
+        self.unlock()
+    }
     
     func calculateLocked<T>(@noescape action: () -> T) -> T {
         self.lock()
         let result = action()
+        self.unlock()
+        return result
+    }
+
+    func calculateLocked<S, T>(state: S, @noescape _ action: (S) -> T) -> T {
+        self.lock()
+        let result = action(state)
         self.unlock()
         return result
     }
