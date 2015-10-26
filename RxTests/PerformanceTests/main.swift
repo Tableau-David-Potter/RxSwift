@@ -26,8 +26,8 @@ compareTwoImplementations(benchmarkTime: true, first: {
     //combineLatest(a,
         publishSubject
         .shareReplay(1)
-        .map { $0 }
-        .filter { _ in true }// ){ x, _ in x }
+        //.map { $0 }
+        //.filter { _ in true }// ){ x, _ in x }
         .subscribeNext { _ in
             
         }
